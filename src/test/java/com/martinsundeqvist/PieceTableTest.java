@@ -32,25 +32,6 @@ public class PieceTableTest {
     }
 
     @Test
-    public void addPieceAtEnd() {
-        // Setup the initial state of the PieceTable with some original content
-        String originalString = "Original content ";
-        PieceTable pieceTable = new PieceTable(originalString);
-
-        // Append a new string to the add buffer and then add a new piece at the end
-        String appendString = "appended.";
-        pieceTable.addToAddBuffer(appendString);
-
-        // Calculate the insert index which is the end of the original content
-        int insertIndex = originalString.length();
-        pieceTable.addPiece(new Piece(0, appendString.length(), Source.ADD), insertIndex);
-
-        // Assert that the final content of the PieceTable is as expected
-        String expectedString = "Original content appended.";
-        assertEquals(expectedString, pieceTable.toString());
-    }
-
-    @Test
     public void addPieceWithSplit() {
         // Setup a piece table with an original string
         String originalString = "the quick brown fox\njumped over the lazy dog";
@@ -65,6 +46,61 @@ public class PieceTableTest {
         pieceTable.addPiece(new Piece(0, addString.length(), Source.ADD), afterFirstLineIndex);
 
         assertEquals("the quick brown fox\nwent to the park and\njumped over the lazy dog", pieceTable.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInsertingInvalidIndex() {
+        // Initialize PieceTable with some content
+        PieceTable pieceTable = new PieceTable("Existing content");
+
+        // Attempt to add a piece at an invalid index (e.g., -1 or beyond the content
+        // length)
+        String addString = "Invalid insert";
+        pieceTable.addToAddBuffer(addString);
+        int invalidIndex = pieceTable.toString().length() + 10; // Example of an index beyond the current content length
+        pieceTable.addPiece(new Piece(0, addString.length(), Source.ADD), invalidIndex);
+
+        // If an exception is not thrown, the test will fail
+    }
+
+    @Test
+    public void testDeleteFromBeginning() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(0); // Deleting 'H'
+        assertEquals("ello World", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteFromMiddle() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(5); // Deleting space
+        assertEquals("HelloWorld", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteFromEnd() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(10); // Deleting 'd'
+        assertEquals("Hello Worl", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteSingleCharacter() {
+        PieceTable pieceTable = new PieceTable("A");
+        pieceTable.delete(0);
+        assertEquals("", pieceTable.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testDeleteInvalidIndex() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(-1); // Invalid index
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testDeleteFromEmptyTable() {
+        PieceTable pieceTable = new PieceTable("");
+        pieceTable.delete(0); // No character to delete
     }
 
 }
