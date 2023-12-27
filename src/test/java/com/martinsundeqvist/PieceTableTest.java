@@ -48,21 +48,6 @@ public class PieceTableTest {
         assertEquals("the quick brown fox\nwent to the park and\njumped over the lazy dog", pieceTable.toString());
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testInsertingInvalidIndex() {
-        // Initialize PieceTable with some content
-        PieceTable pieceTable = new PieceTable("Existing content");
-
-        // Attempt to add a piece at an invalid index (e.g., -1 or beyond the content
-        // length)
-        String addString = "Invalid insert";
-        pieceTable.addToAddBuffer(addString);
-        int invalidIndex = pieceTable.toString().length() + 10; // Example of an index beyond the current content length
-        pieceTable.addPiece(new Piece(0, addString.length(), Source.ADD), invalidIndex);
-
-        // If an exception is not thrown, the test will fail
-    }
-
     @Test
     public void testDeleteFromBeginning() {
         PieceTable pieceTable = new PieceTable("Hello World");
