@@ -27,7 +27,7 @@ To use this library in your project, build it locally, then include the followin
 <dependency>
     <groupId>com.martinsundeqvist</groupId>
     <artifactId>piece-table-library</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 
