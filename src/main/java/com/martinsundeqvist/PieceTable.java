@@ -3,11 +3,22 @@ package com.martinsundeqvist;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The PieceTable class is a data structure that manages text through a piece table,
+ * allowing efficient insertions and deletions. It uses two buffers: the original buffer
+ * contains the original text, and the add buffer stores additional text appended to the
+ * original. The class maintains a list of pieces that reference spans within these two buffers.
+ */
 public class PieceTable {
     private String originalBuffer;
     private StringBuilder addBuffer;
     private List<Piece> pieces;
 
+    /**
+     * Constructs a new PieceTable with the specified original text.
+     *
+     * @param original The initial text to be managed by the piece table.
+     */
     public PieceTable(String original) {
         originalBuffer = original;
         addBuffer = new StringBuilder();
@@ -15,6 +26,12 @@ public class PieceTable {
         pieces.add(new Piece(0, original.length(), Source.ORIGINAL));
     }
 
+    /**
+     * Retrieves the buffer based on the specified source.
+     *
+     * @param source The source of the buffer to retrieve; either the original or added text.
+     * @return The text buffer corresponding to the specified source.
+     */
     public String getBuffer(Source source) {
         if (source == Source.ORIGINAL) {
             return originalBuffer;
@@ -23,10 +40,21 @@ public class PieceTable {
         }
     }
 
+    /**
+     * Appends the given string to the add buffer.
+     *
+     * @param s The string to append to the add buffer.
+     */
     public void addToAddBuffer(String s) {
         addBuffer.append(s);
     }
 
+    /**
+     * Inserts a new piece into the pieces list at the specified index.
+     * 
+     * @param newPiece    The new piece to insert.
+     * @param insertIndex The index at which the new piece should be inserted.
+     */
     public void addPiece(Piece newPiece, int insertIndex) {
         // TODO: Add check for insertIndex and how it spans
         // Use a current index to track what current index is
@@ -66,8 +94,10 @@ public class PieceTable {
     }
 
     /**
-     * 
-     * @param deleteIndex index to delete
+     * Deletes a single character at the specified index.
+     *
+     * @param deleteIndex The index of the character to delete.
+     * @throws IndexOutOfBoundsException If deleteIndex is out of the bounds of the current text.
      */
     public void delete(int deleteIndex) {
         if (deleteIndex < 0 || deleteIndex >= this.toString().length()) {
@@ -106,6 +136,11 @@ public class PieceTable {
         }
     }
 
+    /**
+     * Returns the current text managed by the piece table.
+     *
+     * @return A string representing the current state of the text.
+     */
     public String toString() {
         StringBuilder output = new StringBuilder();
         for (Piece piece : this.pieces) {
