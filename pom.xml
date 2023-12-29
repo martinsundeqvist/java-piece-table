@@ -7,6 +7,11 @@
   <version>1.0-SNAPSHOT</version>
   <name>piece-table-library</name>
   <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+  </properties>
   <licenses>
     <license>
       <name>MIT License</name>
@@ -20,10 +25,6 @@
     <developerConnection>scm:git:ssh://github.com/martinsundeqvist/java-piece-table.git</developerConnection>
     <url>https://github.com/martinsundeqvist/java-piece-table</url>
   </scm>
-  <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

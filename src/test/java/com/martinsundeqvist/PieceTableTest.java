@@ -7,14 +7,25 @@ import org.junit.Test;
 public class PieceTableTest {
 
     @Test
+    public void testMultipleInserts() {
+        String original = "Is this";
+        String s1 = ", where I";
+        String s2 = ", came in?";
+        PieceTable pieceTable = new PieceTable(original);
+        pieceTable.insert(s2, original.length());
+        pieceTable.insert(s1, original.length());
+
+        assertEquals("Is this, where I, came in?", pieceTable.toString());
+    }
+
+    @Test
     public void testInsertWithEmptyOriginal() {
         // Initialize PieceTable with an empty string
         PieceTable pieceTable = new PieceTable("");
 
         // Append a new string to the add buffer and add a piece for it
         String addString = "New content";
-        pieceTable.addToAddBuffer(addString);
-        pieceTable.addPiece(new Piece(0, addString.length(), Source.ADD), 0);
+        pieceTable.insert(addString, 0);
 
         // Assert the content of the PieceTable matches the added string
         assertEquals("New content", pieceTable.toString());
@@ -25,8 +36,7 @@ public class PieceTableTest {
         String originalString = "Start";
         PieceTable pieceTable = new PieceTable(originalString);
         String insertString = "Before ";
-        pieceTable.addToAddBuffer(insertString);
-        pieceTable.addPiece(new Piece(0, insertString.length(), Source.ADD), 0);
+        pieceTable.insert(insertString, 0);
 
         assertEquals("Before Start", pieceTable.toString());
     }
@@ -42,8 +52,7 @@ public class PieceTableTest {
         // and that it should be for
         String addString = "went to the park and\n";
         int afterFirstLineIndex = originalString.indexOf('\n') + 1;
-        pieceTable.addToAddBuffer(addString);
-        pieceTable.addPiece(new Piece(0, addString.length(), Source.ADD), afterFirstLineIndex);
+        pieceTable.insert(addString, afterFirstLineIndex);
 
         assertEquals("the quick brown fox\nwent to the park and\njumped over the lazy dog", pieceTable.toString());
     }

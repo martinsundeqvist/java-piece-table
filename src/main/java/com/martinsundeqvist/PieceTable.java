@@ -41,12 +41,17 @@ public class PieceTable {
     }
 
     /**
-     * Appends the given string to the add buffer.
-     *
-     * @param s The string to append to the add buffer.
+     * Method for inserting a new string into the piece table. Adds the string to the add buffer
+     * as well as a new piece into the piece table.
+     *  
+     * @param s             String to be inserted into added buffer
+     * @param insertIndex   Where in the current file the string is to be inserted
      */
-    public void addToAddBuffer(String s) {
+    public void insert(String s, int insertIndex) {
+        int addBufferInsertIndex = addBuffer.length() != 0 ? addBuffer.length() : 0;
         addBuffer.append(s);
+        Piece piece = new Piece(addBufferInsertIndex, s.length(), Source.ADD);
+        addPiece(piece, insertIndex);
     }
 
     /**
@@ -55,23 +60,18 @@ public class PieceTable {
      * @param newPiece    The new piece to insert.
      * @param insertIndex The index at which the new piece should be inserted.
      */
-    public void addPiece(Piece newPiece, int insertIndex) {
-        // TODO: Add check for insertIndex and how it spans
-        // Use a current index to track what current index is
+    private void addPiece(Piece newPiece, int insertIndex) {
         int currentIndex = 0;
-        // Go over all the pieces to figure out where new piece gets inserted
         for (int i = 0; i < this.pieces.size(); i++) {
             Piece piece = this.pieces.get(i);
-            int diff = insertIndex - currentIndex;
-            if (diff == 0) {
-                // Case 1: We are at the start of current piece, i.e. we should insert new
-                // piece before current piece
+            if (currentIndex  == insertIndex) {
+                // Insert new piece here, move entire old piece one step forward
                 this.pieces.add(i, newPiece);
                 return;
-            } else if (diff <= piece.getLength()) {
-                // Case 2: The insertion needs to be made in the middle of this piece.
-                // We split the existing piece in two, then add our new piece in between old
-                // pieces.
+            } else if (insertIndex < currentIndex + piece.getLength()) {
+                // This means insert index is somewhere inside the current piece
+                // We split at the insert index.
+                int diff = insertIndex - currentIndex;
                 Piece secondHalf = new Piece(piece.getStart() + diff, piece.getLength() - diff, piece.getSource());
                 if (i == this.pieces.size() - 1) {
                     this.pieces.add(secondHalf);
@@ -82,14 +82,10 @@ public class PieceTable {
                 piece.setLength(diff);
                 return;
             } else {
-                // Case 3: There's no overlap so we move currentIndex to first index of next
-                // piece
-                currentIndex += piece.getLength() + 1;
+                // insertIndex is not in current piece, so we jump to first index of next
+                currentIndex += piece.getLength();
             }
         }
-        // TODO: Currently assuming that if we reach end of pieces and didn't find an
-        // insertion point,
-        // we need to simply append the new piece. However,
         this.pieces.add(newPiece);
     }
 
