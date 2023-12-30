@@ -64,7 +64,7 @@ public class PieceTable {
         int currentIndex = 0;
         for (int i = 0; i < this.pieces.size(); i++) {
             Piece piece = this.pieces.get(i);
-            if (currentIndex  == insertIndex) {
+            if (currentIndex == insertIndex) {
                 // Insert new piece here, move entire old piece one step forward
                 this.pieces.add(i, newPiece);
                 return;
@@ -87,6 +87,48 @@ public class PieceTable {
             }
         }
         this.pieces.add(newPiece);
+    }
+
+    /**
+     * Deletes the sequence given by start- and end indices.
+     * 
+     * @param startIndex    Index where deletion starts (inclusive, i.e. character for index is deleted)
+     * @param endIndex      Index where deletion ends (exclusive, i.e. character for index not deleted)
+     */
+    public void delete(int startIndex, int endIndex) {
+        if (startIndex < 0 || endIndex > this.toString().length() || startIndex >= endIndex) {
+            throw new IndexOutOfBoundsException("Invalid start or end index");
+        }
+
+        int currentIndex = 0;
+        List<Piece> newPieces = new ArrayList<>();
+
+        for (Piece piece : this.pieces) {
+            int pieceStart = currentIndex;
+            int pieceEnd = pieceStart + piece.getLength();
+            currentIndex += piece.getLength();
+
+            if (pieceEnd <= startIndex || pieceStart >= endIndex) {
+                // The piece is not in the intersection range
+                newPieces.add(piece);
+            } else if (pieceStart < startIndex && pieceEnd > endIndex) {
+                // The deletion range is entirely within this piece, we split the piece accordingly
+                newPieces.add(new Piece(piece.getStart(), startIndex - pieceStart, piece.getSource()));
+                newPieces.add(new Piece(piece.getStart() + endIndex - pieceStart, pieceEnd - endIndex, piece.getSource()));
+            } else if (pieceStart >= startIndex && pieceEnd <= endIndex) {
+                // The whole piece is in the deletion range, we will not include it in the output range
+            } else {
+                // Partial intersection, adjust the piece
+                if (pieceStart < startIndex) {
+                    newPieces.add(new Piece(piece.getStart(), startIndex - pieceStart, piece.getSource()));
+                }
+                if (pieceEnd > endIndex) {
+                    newPieces.add(new Piece(piece.getStart() + endIndex - pieceStart, pieceEnd - endIndex, piece.getSource()));
+
+                }
+            }
+        }
+        this.pieces = newPieces;
     }
 
     /**

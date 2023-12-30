@@ -97,4 +97,45 @@ public class PieceTableTest {
         pieceTable.delete(0); // No character to delete
     }
 
+    @Test
+    public void testDeleteRangeAtBeginning() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(0, 5); // Deleting "Hello"
+        assertEquals(" World", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteRangeAtEnd() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(6, 11); // Deleting "World"
+        assertEquals("Hello ", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteRangeInTheMiddle() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(4, 7); // Deleting "o W"
+        assertEquals("Hellorld", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteEntireText() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(0, 11); // Deleting everything
+        assertEquals("", pieceTable.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testNoOpDeletionRange() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(5, 5); // No change
+        assertEquals("Hello World", pieceTable.toString());
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testDeleteRangeInvalidIndex() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.delete(-1, 12); // Invalid indices
+    }
+
 }
