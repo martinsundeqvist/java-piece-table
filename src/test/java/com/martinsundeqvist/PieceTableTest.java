@@ -138,4 +138,22 @@ public class PieceTableTest {
         pieceTable.delete(-1, 12); // Invalid indices
     }
 
+    @Test
+    public void testDeleteAcrossMultiplePieces() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.insert(" beautiful", 5);
+        // Text is now "Hello beautiful World"
+        pieceTable.delete(5, 16); // Deleting " beautiful W"
+        assertEquals("HelloWorld", pieceTable.toString());
+    }
+
+    @Test
+    public void testDeleteThatSplitsAPiece() {
+        PieceTable pieceTable = new PieceTable("Hello World");
+        pieceTable.insert(" and wonderful", 11);
+        // Text is now "Hello World and wonderful"
+        pieceTable.delete(12, 16); // Deleting "and "
+        assertEquals("Hello World wonderful", pieceTable.toString());
+    }
+
 }

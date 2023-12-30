@@ -99,36 +99,45 @@ public class PieceTable {
         if (startIndex < 0 || endIndex > this.toString().length() || startIndex >= endIndex) {
             throw new IndexOutOfBoundsException("Invalid start or end index");
         }
-
+        
         int currentIndex = 0;
-        List<Piece> newPieces = new ArrayList<>();
-
-        for (Piece piece : this.pieces) {
+        int pieceIndex = 0;
+        while (pieceIndex < this.pieces.size()) {
+            Piece piece = this.pieces.get(pieceIndex);
             int pieceStart = currentIndex;
             int pieceEnd = pieceStart + piece.getLength();
             currentIndex += piece.getLength();
-
             if (pieceEnd <= startIndex || pieceStart >= endIndex) {
-                // The piece is not in the intersection range
-                newPieces.add(piece);
-            } else if (pieceStart < startIndex && pieceEnd > endIndex) {
-                // The deletion range is entirely within this piece, we split the piece accordingly
-                newPieces.add(new Piece(piece.getStart(), startIndex - pieceStart, piece.getSource()));
-                newPieces.add(new Piece(piece.getStart() + endIndex - pieceStart, pieceEnd - endIndex, piece.getSource()));
+                // Current piece is not in intersection range, so we will leave it
+                pieceIndex += 1;
+            } else if (pieceStart < startIndex || pieceStart >= endIndex) {
+                // Deletion range contained in piece, we need to split it up
+                
+                // Shorten current piece
+                piece.setLength(startIndex - pieceStart);
+                
+                // Add new piece
+                Piece newPiece = new Piece(piece.getStart() + endIndex - pieceStart, pieceEnd - endIndex, piece.getSource());
+                if (pieceIndex == this.pieces.size() - 1) {
+                    this.pieces.add(newPiece);
+                } else {
+                    this.pieces.add(pieceIndex + 1, newPiece);
+                }
+                pieceIndex += 2;
             } else if (pieceStart >= startIndex && pieceEnd <= endIndex) {
-                // The whole piece is in the deletion range, we will not include it in the output range
+                this.pieces.remove(pieceIndex);
             } else {
                 // Partial intersection, adjust the piece
                 if (pieceStart < startIndex) {
-                    newPieces.add(new Piece(piece.getStart(), startIndex - pieceStart, piece.getSource()));
+                    piece.setLength(startIndex - pieceStart);
                 }
                 if (pieceEnd > endIndex) {
-                    newPieces.add(new Piece(piece.getStart() + endIndex - pieceStart, pieceEnd - endIndex, piece.getSource()));
-
+                    piece.setStart(piece.getStart() + endIndex - pieceStart);
+                    piece.setLength(pieceEnd - endIndex);
                 }
+                pieceIndex += 1;
             }
         }
-        this.pieces = newPieces;
     }
 
     /**
